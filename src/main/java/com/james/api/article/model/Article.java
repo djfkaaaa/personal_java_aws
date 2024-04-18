@@ -14,7 +14,7 @@ import lombok.*;
 @ToString(exclude = {"id"})
 public class Article extends BaseEntitiy {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;

@@ -57,7 +57,7 @@ public class ArticleController {
         return ResponseEntity.ok(service.count());
     }
 
-    @GetMapping("")
+    @GetMapping("/byBoardId")
     public ResponseEntity<List<ArticleDto>>findAllByBoardId(@RequestParam("id") Long id){
         return ResponseEntity.ok(service.findAllByBoardId(id));
     }

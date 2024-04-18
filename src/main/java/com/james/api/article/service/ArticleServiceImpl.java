@@ -1,16 +1,14 @@
 package com.james.api.article.service;
 
+import com.james.api.article.model.Article;
 import com.james.api.article.model.ArticleDto;
 import com.james.api.article.repository.ArticleRepository;
-import com.james.api.article.service.ArticleService;
-import com.james.api.board.model.Board;
+import com.james.api.board.repository.BoardRepository;
 import com.james.api.common.component.MessengerVo;
-import com.james.api.common.component.PageRequestVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +18,19 @@ import java.util.Optional;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository repo;
-
+    private final BoardRepository boardRepo;
 
     @Override
     public MessengerVo save(ArticleDto dto) {
-        entityToDto(repo.save(dtoToEntity(dto)));
-        return new MessengerVo();
+        Article ent = repo.save(dtoToEntity(dto,boardRepo));
+        return MessengerVo.builder()
+                .message(ent instanceof Article ? "Success":"Failure")
+                .build();
+//        ArticleDto t = entityToDto(repo.save(dtoToEntity(dto,boardRepo)));
+//        return MessengerVo.builder()
+//                .message(repo.existsByTitle(dto.getTitle())?
+//                        "Success"+t.getBoardId():"failure")
+//                .build();
     }
 
     @Override
@@ -40,8 +45,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDto> findAllByBoardId(Long id) {
-        return repo.findAllByBoardId(id).stream().map(i -> entityToDto(i)).toList();
+    public List<ArticleDto> findAllByBoardId(Long boardId) {
+        return repo.findAllByBoardId(boardId).stream().map(i -> entityToDto(i)).toList();
     }
 
     @Override
