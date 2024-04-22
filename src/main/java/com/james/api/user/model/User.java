@@ -29,19 +29,6 @@ public class User extends BaseEntitiy {
     private String job;
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Article> articles;
-
-
-//    @Builder(builderMethodName = "builder")
-//    public User(Long id,String username,String password, String name, String phoneNumber, String job){
-//        this.id = id;
-//        this.username = username;
-//        this.password = password;
-//        this.name = name;
-//        this.phoneNumber = phoneNumber;
-//        this.job = job;
-//    }
-
-
-
+    private String token;
 
 }

@@ -1,9 +1,10 @@
-package com.james.api.common.component;
+package com.james.api.common.component.security;
 
 import com.james.api.user.model.UserDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 
 @Log4j2
@@ -19,13 +21,9 @@ public class JwtProvider {
 
     @Value("${jwt.iss}")
     private String issuer;
-
-//    @Value("${jwt.exp}")
-//    private Long expiration;
     private final SecretKey secretKey;
 
     Instant expiredDate = Instant.now().plus(1, ChronoUnit.DAYS);
-
 
     public JwtProvider(@Value("${jwt.secret}") String secretKey){
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
@@ -44,9 +42,29 @@ public class JwtProvider {
                 .compact();
 
         log.info("로그인 성공으로 발급된 토큰" + token);
-
         return token;
+    }
 
+    public String extractTokenFromheader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
 
+        if (bearerToken != null && bearerToken.startsWith("Bearer")){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    public String getToken(String token) {
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+
+        log.info("token header : " + header );
+        log.info("token payload : " + payload );
+
+//        return new StringBuilder().append(header).append(payload).toString();
+        return payload;
     }
 }

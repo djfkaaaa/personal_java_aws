@@ -2,7 +2,7 @@ package com.james.api.user.service;
 
 
 
-import com.james.api.common.component.JwtProvider;
+import com.james.api.common.component.security.JwtProvider;
 import com.james.api.common.component.MessengerVo;
 import com.james.api.user.model.User;
 import com.james.api.user.model.UserDto;
@@ -10,11 +10,11 @@ import com.james.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Log4j2
 @Service
@@ -49,6 +49,10 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDto> findById(Long id) {return repo.findById(id).map(i->entityToDto(i));}
 
     @Override
+    public Boolean findByUsername(String username) {
+        return repo.existsByUsername(username);
+    }
+    @Override
     public MessengerVo modify(UserDto dto) {
 //        throw new UnsupportedOperationException("Unimplemented method 'updatePassword'");
         repo.save(dtoToEntity(dto));
@@ -79,13 +83,22 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public MessengerVo login(UserDto param){
+        log.info("로그인 서비스로 들어온 파라미터 :" + param);
+        User user = repo.findUserByUsername(param.getUsername()).get();
+        String token = jwtProvider.createToken(entityToDto(user));
+        boolean flag = user.getPassword().equals(param.getPassword());
 
-        boolean flag = repo.findUserByUsername(param.getUsername()).get().getPassword().equals(param.getPassword());
+        jwtProvider.getToken(token);
 
         return MessengerVo.builder()
                 .message(flag? "Success" : "failure")
-                .token(flag? jwtProvider.createToken(param) : "none")
+                .accessToken(flag? token : "none")
                 .build();}
-    }
+
+
+
+
+}
 

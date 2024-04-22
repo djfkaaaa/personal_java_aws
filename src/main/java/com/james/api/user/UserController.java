@@ -1,7 +1,6 @@
 package com.james.api.user;
 
 import com.james.api.common.component.MessengerVo;
-import com.james.api.common.component.PageRequestVo;
 import com.james.api.user.model.UserDto;
 import com.james.api.user.repository.UserRepository;
 import com.james.api.user.service.UserServiceImpl;
@@ -9,11 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.*;
 
 @CrossOrigin(origins = "*",allowedHeaders = "*")
@@ -46,6 +43,12 @@ public class UserController {
     public ResponseEntity<Optional<UserDto>> findById(@RequestParam("id") Long id){
         log.info("입력받은 정보 : {}",id);
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/getusername")
+    public ResponseEntity<Boolean> findByUsername(@RequestParam("username") String username){
+        log.info("입력받은 정보 : {}",username);
+        return ResponseEntity.ok(service.findByUsername(username));
     }
 
     @PutMapping("/modify")

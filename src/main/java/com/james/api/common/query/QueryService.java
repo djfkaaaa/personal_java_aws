@@ -1,9 +1,5 @@
 package com.james.api.common.query;
 
-import com.james.api.common.component.MessengerVo;
-import com.james.api.common.component.PageRequestVo;
-
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 

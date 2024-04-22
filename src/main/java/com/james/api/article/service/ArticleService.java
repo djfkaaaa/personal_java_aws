@@ -29,14 +29,18 @@ public interface ArticleService extends CommandService<ArticleDto>, QueryService
                 .board(repo.findById(dto.getBoardId()).orElse(null))
                 .build();
     }
-
+//default Article dtoToEntity(ArticleDto dto){
+//    return Article.builder()
+//            .id(dto.getId())
+//            .title(dto.getTitle())
+//            .content(dto.getContent())
+//            .build();
+//}
     default ArticleDto entityToDto(Article article){
         return ArticleDto.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
-                .writerId(article.getWriter().getId())
-                .boardId(article.getBoard().getId())
                 .build();
     }
 }

@@ -1,25 +1,31 @@
-package com.james.api.common.component;
+package com.james.api.common.component.pagination;
 
+
+import com.james.api.article.model.ArticleDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+// 원하는 페이지 단위로 받아오기
 @Component
 @Getter
 @Builder
 @AllArgsConstructor
-public class PageRequestVo {
+public class PageRequestFileVo {
     private int page;
     private int size;
     private String type;
     private String keyword;
 
-    public PageRequestVo() {
+    private List<ArticleDto> pageFileDto;
+
+    public PageRequestFileVo() {
         this.page = 1;
         this.size = 10;
     }
