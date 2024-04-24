@@ -19,6 +19,7 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
     List<UserDto> findUserByJob(String job);
     Optional<User> findUserByUsername(String username);
     MessengerVo login(UserDto user);
+    Boolean logout(String accessToken);
     Boolean findByUsername(String username);
 
     default User dtoToEntity(UserDto dto){
@@ -29,6 +30,7 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .name(dto.getName())
                 .phoneNumber(dto.getPhoneNumber())
                 .job(dto.getJob())
+                .token(dto.getToken())
                 .build();
     }
     default UserDto entityToDto(User user){
@@ -39,8 +41,10 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
                 .job(user.getJob())
+                .token(user.getToken())
                 .build();
     }
+
 
 
 }

@@ -6,15 +6,18 @@ import com.james.api.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final JwtProvider jwt;
@@ -22,23 +25,31 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = jwt.extractTokenFromheader(request);
 
-        if (ObjectUtils.isEmpty(token)){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
-        }
+//        String token = jwt.extractTokenFromheader(request);
+//        log.info("1 - 인터셉터 토큰 로그 bearer 포함 : {}", token );
+//        if (token.equals("undefined")){
+//            response.sendError(HttpServletResponse.SC_ACCEPTED);
+//            return false;}
+//        Long id = jwt.getToken(token).get("userId", Long.class);
+//        log.info("2 - 인터셉터 사용자 id : {}", id);
+//        Optional<User> user = repo.findById(id);
+//        log.info("3 - 인터셉터 사용자 정보 : {}", user);
+//        if (!user.isPresent()){
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+//            return false;}
+//        log.info("4 - 인터셉터 최종 여부 : {} ",true);
 
-        String strId = jwt.getToken(token);
-        Long id = Long.parseLong(strId);
-        Optional<User> user = repo.findById(id);
-
-        if (ObjectUtils.isEmpty(user)){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
-        }
-
-        return true;
+        return Stream.of(request)
+                .map(i -> jwt.extractTokenFromheader(i))
+                .filter(token -> !token.equals("undefined"))
+                .peek(token -> log.info("1 - 인터셉터 토큰 로그 bearer 포함 : {}",token))
+                .map(user ->jwt.getToken(user).get("userId", Long.class))
+                .map(id -> repo.findById(id))
+                .filter(id -> id.isPresent())
+                .peek(id -> log.info("2 - 인터셉터 사용자 ID : {}",id))
+                .findFirst()
+                .isPresent();
     }
 
     @Override

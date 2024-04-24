@@ -6,6 +6,7 @@ import com.james.api.common.BaseEntitiy;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@ToString(exclude = {"id"})
+@ToString(exclude = {"articles","id"})
+
 public class User extends BaseEntitiy {
 
     @Id
@@ -27,7 +29,7 @@ public class User extends BaseEntitiy {
     @Column(name = "phone_number")
     private String phoneNumber;
     private String job;
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "writer",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Article> articles;
     private String token;
 

@@ -12,7 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +89,9 @@ public class UserServiceImpl implements UserService {
         String token = jwtProvider.createToken(entityToDto(user));
         boolean flag = user.getPassword().equals(param.getPassword());
 
-        jwtProvider.getToken(token);
+        repo.modifyTokenById(user.getId(), token);
+
+        jwtProvider.printToken(token);
 
         return MessengerVo.builder()
                 .message(flag? "Success" : "failure")
@@ -100,5 +101,14 @@ public class UserServiceImpl implements UserService {
 
 
 
+
+    @Override
+    @Transactional
+    public Boolean logout(String accessToken) {
+        Long id = 1L;
+        String deleteToken = "";
+        repo.modifyTokenById(id, deleteToken);
+        return repo.findById(id).get().getToken().equals(deleteToken);
+    }
 }
 
