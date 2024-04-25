@@ -14,7 +14,7 @@ import java.util.Map;
 public interface ArticleRepository extends JpaRepository<Article,Long> {
 
     // jpql 디폴트방식
-    @Query("select a from articles a where a.board.id = :boardId")
+    @Query("select a from articles a where a.board.id = :boardId order by a.id desc ")
     List<Article> findAllByBoardId(@Param("boardId") Long boardId);
 
 //    Boolean existsByTitle(String title);

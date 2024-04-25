@@ -21,11 +21,12 @@ public interface ArticleService extends CommandService<ArticleDto>, QueryService
     MessengerVo modify(ArticleDto dto);
 
     List<ArticleDto> findAllByBoardId(Long boardId);
-    default Article dtoToEntity(ArticleDto dto, BoardRepository repo){
+    default Article dtoToEntity(ArticleDto dto, BoardRepository repo, UserRepository userRepo){
         return Article.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
+                .writer(userRepo.findById(dto.getBoardId()).orElse(null))
                 .board(repo.findById(dto.getBoardId()).orElse(null))
                 .build();
     }

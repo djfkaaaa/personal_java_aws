@@ -25,7 +25,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final UserRepository userRepo;
     @Override
     public MessengerVo save(ArticleDto dto) {
-        Article ent = repo.save(dtoToEntity(dto,boardRepo));
+        Article ent = repo.save(dtoToEntity(dto,boardRepo,userRepo));
         return MessengerVo.builder()
                 .message(ent instanceof Article ? "Success":"Failure")
                 .build();
